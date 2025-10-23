@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ジェンベ譜面作成アプリ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .time-signature {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-signature button {
+            background: #ddd;
+            color: #333;
+        }
+
+        .time-signature button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .part {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .part-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .part-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .delete-part {
+            background: #e74c3c;
+            padding: 5px 15px;
+            font-size: 12px;
+        }
+
+        .delete-part:hover {
+            background: #c0392b;
+        }
+
+        .symbol-palette {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .symbol-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .symbol-btn:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .symbol-btn.selected {
+            background: #667eea;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .grid-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(32, 40px);
+            gap: 2px;
+            min-width: fit-content;
+        }
+
+        .grid.time-12-8 {
+            grid-template-columns: repeat(48, 40px);
+        }
+
+        .grid-cell {
+            width: 40px;
+            height: 50px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: white;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+
+        .grid-cell:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+
+        .grid-cell.beat-start {
+            border-left: 2px solid #333;
+        }
+
+        .grid-cell.measure-start {
+            border-left: 3px solid #000;
+            background: #f9f9f9;
+        }
+
+        .grid-cell.has-symbol {
+            background: #e8f0fe;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .controls {
+                padding: 10px;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .symbol-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+
+            .grid-cell {
+                width: 35px;
+                height: 45px;
+                font-size: 18px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(32, 35px);
+            }
+
+            .grid.time-12-8 {
+                grid-template-columns: repeat(48, 35px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ジェンベ譜面作成アプリ</h1>
+
+        <div class="controls">
+            <div class="time-signature">
+                <span>拍子:</span>
+                <button id="time44" class="active">4/4</button>
+                <button id="time128">12/8</button>
+            </div>
+            <button id="addPart">パート追加</button>
+            <button id="saveBtn">保存</button>
+            <button id="loadBtn">読込</button>
+            <button id="clearBtn">クリア</button>
+            <input type="file" id="fileInput" class="file-input" accept=".json">
+        </div>
+
+        <div id="parts"></div>
+
+        <div class="info">
+            操作方法: 記号をクリックして選択 → グリッド上をクリックで配置 → 配置済みの記号をクリックで削除<br>
+            フラム: 隣接する位置に同じ記号を配置 | ロール: 2拍分に記号を3つ配置
+        </div>
+    </div>
+
+    <script>
+        // アプリの状態管理
+        const app = {
+            timeSignature: '4/4', // '4/4' or '12/8'
+            parts: [],
+            selectedSymbol: null,
+            partIdCounter: 0
+        };
+
+        // 記号定義
+        const SYMBOLS = [
+            { name: 'ベース', symbol: '■' },
+            { name: 'トーン', symbol: '●' },
+            { name: 'スラップ', symbol: '▲' },
+            { name: 'ベース(ミュート)', symbol: '□' },
+            { name: 'トーン(ミュート)', symbol: '○' },
+            { name: 'スラップ(ミュート)', symbol: '△' }
+        ];
+
+        // 初期化
+        function init() {
+            loadFromLocalStorage();
+            if (app.parts.length === 0) {
+                addPart();
+            }
+            setupEventListeners();
+            render();
+        }
+
+        // イベントリスナーの設定
+        function setupEventListeners() {
+            document.getElementById('time44').addEventListener('click', () => setTimeSignature('4/4'));
+            document.getElementById('time128').addEventListener('click', () => setTimeSignature('12/8'));
+            document.getElementById('addPart').addEventListener('click', addPart);
+            document.getElementById('saveBtn').addEventListener('click', saveToFile);
+            document.getElementById('loadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+            document.getElementById('fileInput').addEventListener('change', loadFromFile);
+            document.getElementById('clearBtn').addEventListener('click', clearAll);
+        }
+
+        // 拍子設定
+        function setTimeSignature(time) {
+            app.timeSignature = time;
+            document.getElementById('time44').classList.toggle('active', time === '4/4');
+            document.getElementById('time128').classList.toggle('active', time === '12/8');
+            render();
+            saveToLocalStorage();
+        }
+
+        // パート追加
+        function addPart() {
+            if (app.parts.length >= 4) {
+                alert('パートは最大4つまでです');
+                return;
+            }
+            const part = {
+                id: app.partIdCounter++,
+                name: `パート${app.parts.length + 1}`,
+                notes: {}
+            };
+            app.parts.push(part);
+            render();
+            saveToLocalStorage();
+        }
+
+        // パート削除
+        function deletePart(partId) {
+            app.parts = app.parts.filter(p => p.id !== partId);
+            render();
+            saveToLocalStorage();
+        }
+
+        // グリッドのセル数を取得
+        function getGridCells() {
+            return app.timeSignature === '4/4' ? 32 : 48; // 8小節 x (4 or 6)
+        }
+
+        // レンダリング
+        function render() {
+            const partsContainer = document.getElementById('parts');
+            partsContainer.innerHTML = '';
+
+            app.parts.forEach(part => {
+                const partDiv = document.createElement('div');
+                partDiv.className = 'part';
+
+                // パートヘッダー
+                const header = document.createElement('div');
+                header.className = 'part-header';
+                header.innerHTML = `
+                    <div class="part-title">${part.name}</div>
+                    <button class="delete-part" onclick="deletePart(${part.id})">削除</button>
+                `;
+                partDiv.appendChild(header);
+
+                // 記号パレット
+                const palette = document.createElement('div');
+                palette.className = 'symbol-palette';
+                SYMBOLS.forEach(sym => {
+                    const btn = document.createElement('button');
+                    btn.className = 'symbol-btn';
+                    btn.textContent = sym.symbol;
+                    btn.title = sym.name;
+                    btn.onclick = () => selectSymbol(part.id, sym.symbol, btn);
+                    palette.appendChild(btn);
+                });
+                partDiv.appendChild(palette);
+
+                // グリッド
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'grid-container';
+                const grid = document.createElement('div');
+                grid.className = `grid ${app.timeSignature === '12/8' ? 'time-12-8' : ''}`;
+                grid.id = `grid-${part.id}`;
+
+                const cellCount = getGridCells();
+                const cellsPerMeasure = app.timeSignature === '4/4' ? 4 : 6;
+                const cellsPerBeat = 1;
+
+                for (let i = 0; i < cellCount; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+
+                    // 小節の始まり
+                    if (i % cellsPerMeasure === 0) {
+                        cell.classList.add('measure-start');
+                    }
+                    // 拍の始まり
+                    else if (i % cellsPerBeat === 0) {
+                        cell.classList.add('beat-start');
+                    }
+
+                    // 配置されている記号を表示
+                    if (part.notes[i]) {
+                        cell.textContent = part.notes[i];
+                        cell.classList.add('has-symbol');
+                    }
+
+                    cell.onclick = () => placeOrRemoveSymbol(part.id, i);
+                    grid.appendChild(cell);
+                }
+
+                gridContainer.appendChild(grid);
+                partDiv.appendChild(gridContainer);
+                partsContainer.appendChild(partDiv);
+            });
+        }
+
+        // 記号選択
+        function selectSymbol(partId, symbol, btn) {
+            // 同じパートの他のボタンの選択を解除
+            const partElement = btn.closest('.part');
+            partElement.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('selected'));
+
+            if (app.selectedSymbol === symbol) {
+                app.selectedSymbol = null;
+            } else {
+                app.selectedSymbol = symbol;
+                btn.classList.add('selected');
+            }
+        }
+
+        // 記号の配置または削除
+        function placeOrRemoveSymbol(partId, position) {
+            const part = app.parts.find(p => p.id === partId);
+            if (!part) return;
+
+            if (part.notes[position]) {
+                // 既に記号がある場合は削除
+                delete part.notes[position];
+            } else if (app.selectedSymbol) {
+                // 記号を配置
+                part.notes[position] = app.selectedSymbol;
+            }
+
+            render();
+            saveToLocalStorage();
+        }
+
+        // ファイルに保存
+        function saveToFile() {
+            const data = {
+                timeSignature: app.timeSignature,
+                parts: app.parts.map(p => ({
+                    name: p.name,
+                    notes: p.notes
+                }))
+            };
+
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `djembe-score-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ファイルから読込
+        function loadFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    app.timeSignature = data.timeSignature || '4/4';
+                    app.parts = data.parts.map((p, index) => ({
+                        id: app.partIdCounter++,
+                        name: p.name || `パート${index + 1}`,
+                        notes: p.notes || {}
+                    }));
+
+                    setTimeSignature(app.timeSignature);
+                    render();
+                    saveToLocalStorage();
+                    alert('譜面を読み込みました');
+                } catch (error) {
+                    alert('ファイルの読み込みに失敗しました');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // LocalStorageに保存
+        function saveToLocalStorage() {
+            try {
+                const data = {
+                    timeSignature: app.timeSignature,
+                    parts: app.parts,
+                    partIdCounter: app.partIdCounter
+                };
+                localStorage.setItem('djembeScore', JSON.stringify(data));
+            } catch (error) {
+                console.error('LocalStorageへの保存に失敗:', error);
+            }
+        }
+
+        // LocalStorageから読込
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem('djembeScore');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    app.timeSignature = parsed.timeSignature || '4/4';
+                    app.parts = parsed.parts || [];
+                    app.partIdCounter = parsed.partIdCounter || 0;
+                }
+            } catch (error) {
+                console.error('LocalStorageからの読み込みに失敗:', error);
+            }
+        }
+
+        // 全クリア
+        function clearAll() {
+            if (confirm('すべてのデータをクリアしますか？')) {
+                app.parts = [];
+                app.selectedSymbol = null;
+                app.partIdCounter = 0;
+                addPart();
+                saveToLocalStorage();
+            }
+        }
+
+        // アプリ起動
+        init();
+    </script>
+</body>
+</html>
