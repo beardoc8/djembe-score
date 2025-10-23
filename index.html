@@ -158,32 +158,39 @@
         }
 
         .grid-container {
-            overflow-x: auto;
             background: white;
             border-radius: 5px;
             padding: 10px;
-            border: 2px dashed #667eea;
         }
 
-        .grid-container::before {
-            content: '← 横にスクロールできます →';
-            display: block;
-            text-align: center;
-            font-size: 12px;
-            color: #667eea;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(32, 40px);
+        .grid-row {
+            display: flex;
             gap: 2px;
-            min-width: fit-content;
+            margin-bottom: 10px;
+            align-items: center;
         }
 
-        .grid.time-12-8 {
-            grid-template-columns: repeat(48, 40px);
+        .row-label {
+            font-size: 12px;
+            color: #666;
+            min-width: 30px;
+            margin-right: 5px;
+        }
+
+        .grid-cells {
+            display: flex;
+            gap: 2px;
+        }
+
+        .add-row-btn {
+            margin-top: 10px;
+            background: #27ae60;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .add-row-btn:hover {
+            background: #229954;
         }
 
         .grid-cell {
@@ -258,18 +265,6 @@
                 width: 35px;
                 height: 45px;
                 font-size: 18px;
-            }
-
-            .grid {
-                grid-template-columns: repeat(32, 40px);
-            }
-
-            .grid.time-12-8 {
-                grid-template-columns: repeat(48, 40px);
-            }
-
-            .grid-container::before {
-                font-size: 11px;
             }
         }
     </style>
@@ -357,7 +352,8 @@
             const part = {
                 id: app.partIdCounter++,
                 name: `パート${app.parts.length + 1}`,
-                notes: {}
+                notes: {},
+                rows: 4  // 初期4行（4行 x 8マス = 32マス）
             };
             app.parts.push(part);
             render();
@@ -371,9 +367,18 @@
             saveToLocalStorage();
         }
 
-        // グリッドのセル数を取得
-        function getGridCells() {
-            return app.timeSignature === '4/4' ? 32 : 48; // 8小節 x (4 or 6)
+        // 行追加
+        function addRow(partId) {
+            const part = app.parts.find(p => p.id === partId);
+            if (!part) return;
+            part.rows++;
+            render();
+            saveToLocalStorage();
+        }
+
+        // グリッドのセル数を取得（1行あたり）
+        function getCellsPerRow() {
+            return 8; // 1行に8マス
         }
 
         // レンダリング
@@ -420,38 +425,56 @@
                 // グリッド
                 const gridContainer = document.createElement('div');
                 gridContainer.className = 'grid-container';
-                const grid = document.createElement('div');
-                grid.className = `grid ${app.timeSignature === '12/8' ? 'time-12-8' : ''}`;
-                grid.id = `grid-${part.id}`;
 
-                const cellCount = getGridCells();
-                const cellsPerMeasure = app.timeSignature === '4/4' ? 4 : 6;
-                const cellsPerBeat = 1;
+                const cellsPerRow = getCellsPerRow();
+                const rows = part.rows || 4;
 
-                for (let i = 0; i < cellCount; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'grid-cell';
+                // 行ごとにグリッドを作成
+                for (let row = 0; row < rows; row++) {
+                    const gridRow = document.createElement('div');
+                    gridRow.className = 'grid-row';
 
-                    // 小節の始まり
-                    if (i % cellsPerMeasure === 0) {
-                        cell.classList.add('measure-start');
+                    // 行ラベル
+                    const rowLabel = document.createElement('div');
+                    rowLabel.className = 'row-label';
+                    rowLabel.textContent = `${row + 1}:`;
+                    gridRow.appendChild(rowLabel);
+
+                    // セルコンテナ
+                    const gridCells = document.createElement('div');
+                    gridCells.className = 'grid-cells';
+
+                    for (let col = 0; col < cellsPerRow; col++) {
+                        const position = row * cellsPerRow + col;
+                        const cell = document.createElement('div');
+                        cell.className = 'grid-cell';
+
+                        // 4マスごとに区切り線（小節の区切り）
+                        if (col % 4 === 0) {
+                            cell.classList.add('measure-start');
+                        }
+
+                        // 配置されている記号を表示
+                        if (part.notes[position]) {
+                            cell.textContent = part.notes[position];
+                            cell.classList.add('has-symbol');
+                        }
+
+                        cell.onclick = () => placeOrRemoveSymbol(part.id, position);
+                        gridCells.appendChild(cell);
                     }
-                    // 拍の始まり
-                    else if (i % cellsPerBeat === 0) {
-                        cell.classList.add('beat-start');
-                    }
 
-                    // 配置されている記号を表示
-                    if (part.notes[i]) {
-                        cell.textContent = part.notes[i];
-                        cell.classList.add('has-symbol');
-                    }
-
-                    cell.onclick = () => placeOrRemoveSymbol(part.id, i);
-                    grid.appendChild(cell);
+                    gridRow.appendChild(gridCells);
+                    gridContainer.appendChild(gridRow);
                 }
 
-                gridContainer.appendChild(grid);
+                // 行追加ボタン
+                const addRowButton = document.createElement('button');
+                addRowButton.className = 'add-row-btn';
+                addRowButton.textContent = '+ 行を追加';
+                addRowButton.onclick = () => addRow(part.id);
+                gridContainer.appendChild(addRowButton);
+
                 partDiv.appendChild(gridContainer);
                 partsContainer.appendChild(partDiv);
             });
@@ -521,7 +544,8 @@
                     app.parts = data.parts.map((p, index) => ({
                         id: app.partIdCounter++,
                         name: p.name || `パート${index + 1}`,
-                        notes: p.notes || {}
+                        notes: p.notes || {},
+                        rows: p.rows || 4
                     }));
 
                     setTimeSignature(app.timeSignature);
@@ -558,7 +582,10 @@
                 if (data) {
                     const parsed = JSON.parse(data);
                     app.timeSignature = parsed.timeSignature || '4/4';
-                    app.parts = parsed.parts || [];
+                    app.parts = (parsed.parts || []).map(p => ({
+                        ...p,
+                        rows: p.rows || 4  // 既存データにrowsがない場合は4行に
+                    }));
                     app.partIdCounter = parsed.partIdCounter || 0;
                 }
             } catch (error) {
