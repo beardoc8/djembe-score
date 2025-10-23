@@ -118,15 +118,32 @@
             flex-wrap: wrap;
         }
 
+        .symbol-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .symbol-label {
+            font-size: 10px;
+            color: #666;
+            text-align: center;
+        }
+
         .symbol-btn {
             width: 50px;
             height: 50px;
             border: 2px solid #ddd;
             background: white;
             border-radius: 5px;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .symbol-btn:hover {
@@ -145,6 +162,17 @@
             background: white;
             border-radius: 5px;
             padding: 10px;
+            border: 2px dashed #667eea;
+        }
+
+        .grid-container::before {
+            content: '← 横にスクロールできます →';
+            display: block;
+            text-align: center;
+            font-size: 12px;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
 
         .grid {
@@ -221,9 +249,9 @@
             }
 
             .symbol-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 20px;
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
             }
 
             .grid-cell {
@@ -233,11 +261,15 @@
             }
 
             .grid {
-                grid-template-columns: repeat(32, 35px);
+                grid-template-columns: repeat(32, 40px);
             }
 
             .grid.time-12-8 {
-                grid-template-columns: repeat(48, 35px);
+                grid-template-columns: repeat(48, 40px);
+            }
+
+            .grid-container::before {
+                font-size: 11px;
             }
         }
     </style>
@@ -366,12 +398,22 @@
                 const palette = document.createElement('div');
                 palette.className = 'symbol-palette';
                 SYMBOLS.forEach(sym => {
+                    const item = document.createElement('div');
+                    item.className = 'symbol-item';
+
                     const btn = document.createElement('button');
                     btn.className = 'symbol-btn';
                     btn.textContent = sym.symbol;
                     btn.title = sym.name;
                     btn.onclick = () => selectSymbol(part.id, sym.symbol, btn);
-                    palette.appendChild(btn);
+
+                    const label = document.createElement('div');
+                    label.className = 'symbol-label';
+                    label.textContent = sym.name;
+
+                    item.appendChild(btn);
+                    item.appendChild(label);
+                    palette.appendChild(item);
                 });
                 partDiv.appendChild(palette);
 
