@@ -15,44 +15,43 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            padding: 30px;
+            padding: 20px;
         }
 
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
+            margin-bottom: 20px;
+            font-size: 24px;
         }
 
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding: 20px;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
             background: #f5f5f5;
             border-radius: 10px;
         }
 
         button {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             background: #667eea;
             color: white;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 500;
             transition: all 0.3s;
         }
 
@@ -65,11 +64,27 @@
             transform: translateY(0);
         }
 
+        .time-signature {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-signature button {
+            background: #ddd;
+            color: #333;
+        }
+
+        .time-signature button.active {
+            background: #667eea;
+            color: white;
+        }
+
         .part {
-            margin-bottom: 40px;
-            padding: 25px;
+            margin-bottom: 30px;
+            padding: 15px;
             border: 2px solid #ddd;
-            border-radius: 12px;
+            border-radius: 10px;
             background: #fafafa;
         }
 
@@ -77,15 +92,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .part-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #333;
             border: 2px solid transparent;
-            padding: 8px 12px;
+            padding: 5px 10px;
             border-radius: 5px;
             background: transparent;
             transition: all 0.2s;
@@ -105,8 +120,8 @@
 
         .delete-part {
             background: #e74c3c;
-            padding: 8px 18px;
-            font-size: 13px;
+            padding: 5px 15px;
+            font-size: 12px;
         }
 
         .delete-part:hover {
@@ -114,18 +129,18 @@
         }
 
         .section-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #555;
-            margin-bottom: 15px;
-            padding-left: 8px;
+            margin-bottom: 10px;
+            padding-left: 5px;
             border-left: 4px solid #667eea;
         }
 
         .symbol-palette {
             display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
+            gap: 10px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
@@ -133,22 +148,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 3px;
         }
 
         .symbol-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #666;
             text-align: center;
         }
 
         .symbol-btn {
-            width: 55px;
-            height: 55px;
+            width: 50px;
+            height: 50px;
             border: 2px solid #ddd;
             background: white;
-            border-radius: 8px;
-            font-size: 30px;
+            border-radius: 5px;
+            font-size: 28px;
             font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", Arial, sans-serif;
             font-weight: bold;
             color: #000;
@@ -157,6 +172,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1;
         }
 
         .symbol-btn:hover {
@@ -179,86 +195,51 @@
 
         .grid-container {
             background: white;
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 5px;
+            padding: 10px;
         }
 
         .grid-row {
             display: flex;
-            gap: 3px;
-            margin-bottom: 15px;
+            gap: 2px;
+            margin-bottom: 10px;
             align-items: center;
         }
 
         .row-label {
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
-            font-weight: bold;
-            min-width: 35px;
-            margin-right: 8px;
+            min-width: 30px;
+            margin-right: 5px;
         }
 
         .grid-cells {
             display: flex;
-            gap: 3px;
-            flex: 1;
+            gap: 2px;
         }
 
-        .beat-controls {
-            display: flex;
-            gap: 8px;
-            margin-left: 15px;
-            align-items: center;
-        }
-
-        .beat-label {
-            font-size: 12px;
-            color: #666;
-            margin-right: 5px;
-        }
-
-        .beat-toggle {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #f0f0f0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-            min-width: 50px;
-        }
-
-        .beat-toggle:hover {
-            background: #e0e0e0;
-            border-color: #999;
-        }
-
-        .beat-toggle.active-4 {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .beat-toggle.active-3 {
+        .add-row-btn {
+            margin-top: 10px;
             background: #27ae60;
-            color: white;
-            border-color: #27ae60;
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .add-row-btn:hover {
+            background: #229954;
         }
 
         .grid-cell {
-            width: 45px;
-            height: 55px;
+            width: 40px;
+            height: 50px;
             border: 1px solid #ddd;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             background: white;
-            font-size: 22px;
-            font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", Arial, sans-serif;
-            font-weight: bold;
+            font-size: 20px;
             transition: all 0.2s;
-            border-radius: 4px;
         }
 
         .grid-cell:hover {
@@ -266,8 +247,12 @@
             border-color: #667eea;
         }
 
+        .grid-cell.beat-start {
+            border-left: 2px solid #333;
+        }
+
         .grid-cell.measure-start {
-            border-left: 3px solid #333;
+            border-left: 3px solid #000;
             background: #f9f9f9;
         }
 
@@ -284,50 +269,47 @@
             background: #ffe8a1;
         }
 
-        .add-row-btn {
-            margin-top: 15px;
-            background: #27ae60;
-            padding: 10px 20px;
-            font-size: 14px;
-        }
-
-        .add-row-btn:hover {
-            background: #229954;
-        }
-
-        .info {
-            margin-top: 30px;
-            padding: 20px;
-            background: #e8f5e9;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #2e7d32;
-            line-height: 1.6;
-        }
-
         .file-input {
             display: none;
         }
 
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #2e7d32;
+        }
+
         @media (max-width: 768px) {
             .container {
-                padding: 15px;
+                padding: 10px;
             }
 
             h1 {
-                font-size: 22px;
+                font-size: 20px;
+            }
+
+            .controls {
+                padding: 10px;
+            }
+
+            button {
+                padding: 8px 15px;
+                font-size: 12px;
             }
 
             .symbol-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 26px;
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
             }
 
             .grid-cell {
-                width: 40px;
-                height: 50px;
-                font-size: 20px;
+                width: 35px;
+                height: 45px;
+                font-size: 18px;
             }
         }
     </style>
@@ -337,6 +319,11 @@
         <h1>ジェンベ譜面作成アプリ</h1>
 
         <div class="controls">
+            <div class="time-signature">
+                <span>拍子:</span>
+                <button id="time44" class="active">4/4</button>
+                <button id="time128">12/8</button>
+            </div>
             <button id="addPart">パート追加</button>
             <button id="saveBtn">保存</button>
             <button id="loadBtn">読込</button>
@@ -347,32 +334,29 @@
         <div id="parts"></div>
 
         <div class="info">
-            <strong>操作方法:</strong><br>
-            1. 記号をクリックして選択 → グリッド上をクリックで配置 → 配置済みの記号をクリックで削除<br>
-            2. パート名はクリックして編集可能<br>
-            3. 小節をクリックすると、その小節全体が黄色でハイライト表示されます
+            操作方法: 記号をクリックして選択 → グリッド上をクリックで配置 → 配置済みの記号をクリックで削除<br>
+            フラム: 隣接する位置に同じ記号を配置 | ロール: 2拍分に記号を3つ配置
         </div>
     </div>
 
     <script>
         // アプリの状態管理
         const app = {
+            timeSignature: '4/4', // '4/4' or '12/8'
             parts: [],
             selectedSymbol: null,
-            selectedBeatGroup: null, // { partId, row, measureIndex }
+            selectedBeatGroup: null, // { partId, row, groupIndex }
             partIdCounter: 0
         };
 
-        // 記号定義（8種類）
+        // 記号定義
         const SYMBOLS = [
             { name: 'ベース', symbol: '□' },
             { name: 'トーン', symbol: '○' },
             { name: 'スラップ', symbol: '△' },
             { name: 'ベース(ミュート)', symbol: '■' },
             { name: 'トーン(ミュート)', symbol: '●' },
-            { name: 'スラップ(ミュート)', symbol: '▲' },
-            { name: 'ロール', symbol: '≡' },
-            { name: 'フラム', symbol: '≈' }
+            { name: 'スラップ(ミュート)', symbol: '▲' }
         ];
 
         // 初期化
@@ -387,11 +371,23 @@
 
         // イベントリスナーの設定
         function setupEventListeners() {
+            document.getElementById('time44').addEventListener('click', () => setTimeSignature('4/4'));
+            document.getElementById('time128').addEventListener('click', () => setTimeSignature('12/8'));
             document.getElementById('addPart').addEventListener('click', addPart);
             document.getElementById('saveBtn').addEventListener('click', saveToFile);
             document.getElementById('loadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
             document.getElementById('fileInput').addEventListener('change', loadFromFile);
             document.getElementById('clearBtn').addEventListener('click', clearAll);
+        }
+
+        // 拍子設定
+        function setTimeSignature(time) {
+            app.timeSignature = time;
+            app.selectedBeatGroup = null; // 拍子変更時にビートグループ選択をリセット
+            document.getElementById('time44').classList.toggle('active', time === '4/4');
+            document.getElementById('time128').classList.toggle('active', time === '12/8');
+            render();
+            saveToLocalStorage();
         }
 
         // パート追加
@@ -439,22 +435,13 @@
             saveToLocalStorage();
         }
 
-        // 小節の連数を切り替え（3連 ⇔ 4連）
-        function toggleMeasureBeats(partId, row, measureIndex) {
-            const part = app.parts.find(p => p.id === partId);
-            if (!part) return;
-            const current = part.rowConfigs[row].beats[measureIndex];
-            part.rowConfigs[row].beats[measureIndex] = current === 4 ? 3 : 4;
-            render();
-            saveToLocalStorage();
-        }
-
         // 指定行のマス数を取得
         function getCellsForRow(rowConfig) {
+            // rowConfig.beats = [小節1の連数, 小節2の連数]
             return rowConfig.beats[0] + rowConfig.beats[1];
         }
 
-        // 指定列が属する小節の情報を取得
+        // 指定列が属する小節のインデックス（0または1）と、その小節内での連数を取得
         function getMeasureInfo(rowConfig, col) {
             const measure1Beats = rowConfig.beats[0];
             if (col < measure1Beats) {
@@ -528,7 +515,7 @@
                     }
                     btn.textContent = sym.symbol;
                     btn.title = sym.name;
-                    btn.onclick = () => selectSymbol(part.id, sym.symbol);
+                    btn.onclick = () => selectSymbol(part.id, sym.symbol, btn);
 
                     const label = document.createElement('div');
                     label.className = 'symbol-label';
@@ -550,11 +537,11 @@
                 const gridContainer = document.createElement('div');
                 gridContainer.className = 'grid-container';
 
-                const rows = part.rowConfigs.length;
+                const cellsPerRow = getCellsPerRow();
+                const rows = part.rows || 4;
 
                 // 行ごとにグリッドを作成
                 for (let row = 0; row < rows; row++) {
-                    const rowConfig = part.rowConfigs[row];
                     const gridRow = document.createElement('div');
                     gridRow.className = 'grid-row';
 
@@ -568,24 +555,24 @@
                     const gridCells = document.createElement('div');
                     gridCells.className = 'grid-cells';
 
-                    const cellsInRow = getCellsForRow(rowConfig);
-
-                    for (let col = 0; col < cellsInRow; col++) {
-                        const position = calculatePosition(part, row, col);
+                    for (let col = 0; col < cellsPerRow; col++) {
+                        const position = row * cellsPerRow + col;
                         const cell = document.createElement('div');
                         cell.className = 'grid-cell';
 
-                        // 小節の区切り（各小節の開始位置）
-                        const measureInfo = getMeasureInfo(rowConfig, col);
-                        if (col === 0 || col === measureInfo.startCol) {
+                        // 拍子に応じた区切り線（小節の区切り）
+                        // 4/4拍子: 4マスごと、12/8拍子: 3マスごと
+                        const beatGroupSize = getBeatGroupSize();
+                        if (col % beatGroupSize === 0) {
                             cell.classList.add('measure-start');
                         }
 
                         // ビートグループ選択状態のハイライト
+                        const groupIndex = getBeatGroupIndex(col);
                         if (app.selectedBeatGroup &&
                             app.selectedBeatGroup.partId === part.id &&
                             app.selectedBeatGroup.row === row &&
-                            app.selectedBeatGroup.measureIndex === measureInfo.measureIndex) {
+                            app.selectedBeatGroup.groupIndex === groupIndex) {
                             cell.classList.add('beat-selected');
                         }
 
@@ -600,28 +587,6 @@
                     }
 
                     gridRow.appendChild(gridCells);
-
-                    // 小節ごとの4連/3連切り替えボタン
-                    const beatControls = document.createElement('div');
-                    beatControls.className = 'beat-controls';
-
-                    // 小節1の切り替えボタン
-                    const toggle1 = document.createElement('button');
-                    toggle1.className = 'beat-toggle';
-                    toggle1.classList.add(rowConfig.beats[0] === 4 ? 'active-4' : 'active-3');
-                    toggle1.textContent = rowConfig.beats[0] === 4 ? '4連' : '3連';
-                    toggle1.onclick = () => toggleMeasureBeats(part.id, row, 0);
-                    beatControls.appendChild(toggle1);
-
-                    // 小節2の切り替えボタン
-                    const toggle2 = document.createElement('button');
-                    toggle2.className = 'beat-toggle';
-                    toggle2.classList.add(rowConfig.beats[1] === 4 ? 'active-4' : 'active-3');
-                    toggle2.textContent = rowConfig.beats[1] === 4 ? '4連' : '3連';
-                    toggle2.onclick = () => toggleMeasureBeats(part.id, row, 1);
-                    beatControls.appendChild(toggle2);
-
-                    gridRow.appendChild(beatControls);
                     gridContainer.appendChild(gridRow);
                 }
 
@@ -638,13 +603,17 @@
         }
 
         // 記号選択
-        function selectSymbol(partId, symbol) {
+        function selectSymbol(partId, symbol, btn) {
+            // 同じパートの他のボタンの選択を解除
+            const partElement = btn.closest('.part');
+            partElement.querySelectorAll('.symbol-btn').forEach(b => b.classList.remove('selected'));
+
             if (app.selectedSymbol === symbol) {
                 app.selectedSymbol = null;
             } else {
                 app.selectedSymbol = symbol;
+                btn.classList.add('selected');
             }
-            render();
         }
 
         // 記号の配置または削除
@@ -653,12 +622,11 @@
             if (!part) return;
 
             // ビートグループ選択状態を更新
-            const rowConfig = part.rowConfigs[row];
-            const measureInfo = getMeasureInfo(rowConfig, col);
+            const groupIndex = getBeatGroupIndex(col);
             app.selectedBeatGroup = {
                 partId: partId,
                 row: row,
-                measureIndex: measureInfo.measureIndex
+                groupIndex: groupIndex
             };
 
             if (part.notes[position]) {
@@ -676,9 +644,9 @@
         // ファイルに保存
         function saveToFile() {
             const data = {
+                timeSignature: app.timeSignature,
                 parts: app.parts.map(p => ({
                     name: p.name,
-                    rowConfigs: p.rowConfigs,
                     notes: p.notes
                 }))
             };
@@ -702,13 +670,15 @@
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
+                    app.timeSignature = data.timeSignature || '4/4';
                     app.parts = data.parts.map((p, index) => ({
                         id: app.partIdCounter++,
                         name: p.name || `パート${index + 1}`,
-                        rowConfigs: p.rowConfigs || [{ beats: [4, 4] }],
-                        notes: p.notes || {}
+                        notes: p.notes || {},
+                        rows: p.rows || 4
                     }));
 
+                    setTimeSignature(app.timeSignature);
                     render();
                     saveToLocalStorage();
                     alert('譜面を読み込みました');
@@ -725,6 +695,7 @@
         function saveToLocalStorage() {
             try {
                 const data = {
+                    timeSignature: app.timeSignature,
                     parts: app.parts,
                     partIdCounter: app.partIdCounter
                 };
@@ -740,9 +711,10 @@
                 const data = localStorage.getItem('djembeScore');
                 if (data) {
                     const parsed = JSON.parse(data);
+                    app.timeSignature = parsed.timeSignature || '4/4';
                     app.parts = (parsed.parts || []).map(p => ({
                         ...p,
-                        rowConfigs: p.rowConfigs || [{ beats: [4, 4] }]
+                        rows: p.rows || 4  // 既存データにrowsがない場合は4行に
                     }));
                     app.partIdCounter = parsed.partIdCounter || 0;
                 }
@@ -756,7 +728,6 @@
             if (confirm('すべてのデータをクリアしますか？')) {
                 app.parts = [];
                 app.selectedSymbol = null;
-                app.selectedBeatGroup = null;
                 app.partIdCounter = 0;
                 addPart();
                 saveToLocalStorage();
