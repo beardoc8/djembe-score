@@ -1159,13 +1159,18 @@
                 measureIndex: measureInfo.measureIndex
             };
 
-            // 記号を配置（常に上書き）
+            // 記号を配置または削除
             if (app.selectedSymbol) {
-                // フラム装飾がONで、かつロール（≡）でない場合はフラム記号を付加
-                if (app.flamEnabled && app.selectedSymbol !== '≡') {
-                    part.notes[position] = app.selectedSymbol + '≈';
+                // 配置する記号を決定（フラム装飾の有無を考慮）
+                const symbolToPlace = (app.flamEnabled && app.selectedSymbol !== '≡')
+                    ? app.selectedSymbol + '≈'
+                    : app.selectedSymbol;
+
+                // 既に同じ記号が配置されている場合は削除、異なる場合は上書き
+                if (part.notes[position] === symbolToPlace) {
+                    delete part.notes[position];
                 } else {
-                    part.notes[position] = app.selectedSymbol;
+                    part.notes[position] = symbolToPlace;
                 }
             }
 
