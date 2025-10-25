@@ -9,6 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -16,6 +17,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            -webkit-text-size-adjust: 100%;
         }
 
         .container {
@@ -129,6 +131,13 @@
             flex-wrap: wrap;
         }
 
+        .symbol-divider {
+            width: 2px;
+            background: #999;
+            margin: 0 15px;
+            align-self: stretch;
+        }
+
         .symbol-item {
             display: flex;
             flex-direction: column;
@@ -188,6 +197,7 @@
             gap: 3px;
             margin-bottom: 15px;
             align-items: center;
+            min-width: fit-content;
         }
 
         .row-label {
@@ -205,6 +215,13 @@
         }
 
         .beat-controls {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
+            align-items: center;
+        }
+
+        .row-action-controls {
             display: flex;
             gap: 8px;
             margin-left: 15px;
@@ -310,24 +327,250 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .container {
-                padding: 15px;
+                padding: 10px;
+                max-width: 100%;
             }
 
             h1 {
-                font-size: 22px;
+                font-size: 18px;
+                margin-bottom: 15px;
+            }
+
+            .controls {
+                padding: 10px;
+                gap: 8px;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .part {
+                padding: 12px;
+                margin-bottom: 20px;
+            }
+
+            .part-header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .part-title {
+                font-size: 16px;
+                padding: 6px 10px;
+                min-width: 120px;
+            }
+
+            .delete-part {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .section-label {
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            .symbol-palette {
+                gap: 6px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 5px;
+            }
+
+            .symbol-divider {
+                margin: 0 8px;
+            }
+
+            .symbol-item {
+                flex-shrink: 0;
+            }
+
+            .symbol-label {
+                font-size: 9px;
             }
 
             .symbol-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 26px;
+                width: 40px;
+                height: 40px;
+                font-size: 22px;
+            }
+
+            .symbol-btn.selected {
+                border: 3px solid #4c5ed0;
+            }
+
+            .grid-container {
+                padding: 10px;
+                overflow-x: auto;
+            }
+
+            .grid-row {
+                margin-bottom: 10px;
+                gap: 2px;
+            }
+
+            .row-label {
+                font-size: 11px;
+                min-width: 25px;
+                margin-right: 5px;
+            }
+
+            .grid-cells {
+                gap: 2px;
             }
 
             .grid-cell {
-                width: 40px;
-                height: 50px;
-                font-size: 20px;
+                width: 32px;
+                height: 40px;
+                font-size: 16px;
+                border-radius: 3px;
+            }
+
+            .grid-cell.measure-start {
+                border-left: 2px solid #333;
+            }
+
+            .beat-controls {
+                gap: 4px;
+                margin-left: 8px;
+                flex-wrap: wrap;
+            }
+
+            .row-action-controls {
+                gap: 4px;
+                margin-left: 8px;
+                flex-wrap: wrap;
+            }
+
+            .beat-toggle {
+                padding: 4px 8px;
+                font-size: 10px;
+                min-width: 40px;
+            }
+
+            .add-row-btn {
+                margin-top: 10px;
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .info {
+                margin-top: 20px;
+                padding: 12px;
+                font-size: 11px;
+                line-height: 1.5;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                padding: 8px;
+            }
+
+            h1 {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+
+            .controls {
+                padding: 8px;
+                gap: 6px;
+            }
+
+            button {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .part {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+
+            .part-title {
+                font-size: 14px;
+                padding: 5px 8px;
+                min-width: 100px;
+            }
+
+            .section-label {
+                font-size: 12px;
+                margin-bottom: 8px;
+            }
+
+            .symbol-palette {
+                gap: 4px;
+            }
+
+            .symbol-divider {
+                margin: 0 5px;
+            }
+
+            .symbol-label {
+                font-size: 8px;
+            }
+
+            .symbol-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+
+            .grid-container {
+                padding: 8px;
+            }
+
+            .grid-row {
+                margin-bottom: 8px;
+            }
+
+            .row-label {
+                font-size: 10px;
+                min-width: 20px;
+                margin-right: 4px;
+            }
+
+            .grid-cell {
+                width: 28px;
+                height: 36px;
+                font-size: 14px;
+            }
+
+            .beat-controls {
+                gap: 3px;
+                margin-left: 5px;
+            }
+
+            .row-action-controls {
+                gap: 3px;
+                margin-left: 5px;
+            }
+
+            .beat-toggle {
+                padding: 3px 6px;
+                font-size: 9px;
+                min-width: 35px;
+            }
+
+            .add-row-btn {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .info {
+                padding: 10px;
+                font-size: 10px;
             }
         }
     </style>
@@ -573,7 +816,7 @@
                     // フラムの前に区切り線を挿入
                     if (!sym.isBasic && index > 0) {
                         const divider = document.createElement('div');
-                        divider.style.cssText = 'width: 2px; background: #999; margin: 0 15px; align-self: stretch;';
+                        divider.className = 'symbol-divider';
                         palette.appendChild(divider);
                     }
 
@@ -694,7 +937,7 @@
 
                     // 行コピー・貼り付けボタン
                     const rowActionControls = document.createElement('div');
-                    rowActionControls.style.cssText = 'display: flex; gap: 8px; margin-left: 15px;';
+                    rowActionControls.className = 'row-action-controls';
 
                     // コピーボタン
                     const copyBtn = document.createElement('button');
