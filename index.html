@@ -99,6 +99,23 @@
             font-size: 18px;
             font-weight: bold;
             color: #333;
+            border: 2px solid transparent;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: transparent;
+            transition: all 0.2s;
+            min-width: 150px;
+        }
+
+        .part-title:hover {
+            border-color: #ddd;
+            background: #f9f9f9;
+        }
+
+        .part-title:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
         }
 
         .delete-part {
@@ -109,6 +126,15 @@
 
         .delete-part:hover {
             background: #c0392b;
+        }
+
+        .section-label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            border-left: 4px solid #667eea;
         }
 
         .symbol-palette {
@@ -138,6 +164,9 @@
             background: white;
             border-radius: 5px;
             font-size: 28px;
+            font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols", Arial, sans-serif;
+            font-weight: bold;
+            color: #000;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
@@ -153,8 +182,15 @@
 
         .symbol-btn.selected {
             background: #667eea;
-            border-color: #667eea;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+            border: 4px solid #4c5ed0;
+            color: white;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.8), 0 0 0 2px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+
+        .symbol-btn.selected:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 1), 0 0 0 3px rgba(102, 126, 234, 0.4);
         }
 
         .grid-container {
@@ -305,12 +341,12 @@
 
         // 記号定義
         const SYMBOLS = [
-            { name: 'ベース', symbol: '■' },
-            { name: 'トーン', symbol: '●' },
-            { name: 'スラップ', symbol: '▲' },
-            { name: 'ベース(ミュート)', symbol: '□' },
-            { name: 'トーン(ミュート)', symbol: '○' },
-            { name: 'スラップ(ミュート)', symbol: '△' }
+            { name: 'ベース', symbol: '□' },
+            { name: 'トーン', symbol: '○' },
+            { name: 'スラップ', symbol: '△' },
+            { name: 'ベース(ミュート)', symbol: '■' },
+            { name: 'トーン(ミュート)', symbol: '●' },
+            { name: 'スラップ(ミュート)', symbol: '▲' }
         ];
 
         // 初期化
@@ -367,6 +403,13 @@
             saveToLocalStorage();
         }
 
+        // パート名更新
+        function updatePartName(partId, newName) {
+            const part = app.parts.find(p => p.id === partId);
+            if (!part) return;
+            part.name = newName;
+        }
+
         // 行追加
         function addRow(partId) {
             const part = app.parts.find(p => p.id === partId);
@@ -393,11 +436,30 @@
                 // パートヘッダー
                 const header = document.createElement('div');
                 header.className = 'part-header';
-                header.innerHTML = `
-                    <div class="part-title">${part.name}</div>
-                    <button class="delete-part" onclick="deletePart(${part.id})">削除</button>
-                `;
+
+                // パート名入力欄
+                const partNameInput = document.createElement('input');
+                partNameInput.type = 'text';
+                partNameInput.className = 'part-title';
+                partNameInput.value = part.name;
+                partNameInput.addEventListener('input', (e) => updatePartName(part.id, e.target.value));
+                partNameInput.addEventListener('blur', () => saveToLocalStorage());
+
+                // 削除ボタン
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-part';
+                deleteBtn.textContent = '削除';
+                deleteBtn.onclick = () => deletePart(part.id);
+
+                header.appendChild(partNameInput);
+                header.appendChild(deleteBtn);
                 partDiv.appendChild(header);
+
+                // 音の種類ラベル
+                const soundTypeLabel = document.createElement('div');
+                soundTypeLabel.className = 'section-label';
+                soundTypeLabel.textContent = '音の種類';
+                partDiv.appendChild(soundTypeLabel);
 
                 // 記号パレット
                 const palette = document.createElement('div');
@@ -408,6 +470,10 @@
 
                     const btn = document.createElement('button');
                     btn.className = 'symbol-btn';
+                    // 現在選択中の記号と一致する場合、selectedクラスを追加
+                    if (app.selectedSymbol === sym.symbol) {
+                        btn.classList.add('selected');
+                    }
                     btn.textContent = sym.symbol;
                     btn.title = sym.name;
                     btn.onclick = () => selectSymbol(part.id, sym.symbol, btn);
@@ -421,6 +487,12 @@
                     palette.appendChild(item);
                 });
                 partDiv.appendChild(palette);
+
+                // 譜面欄ラベル
+                const scoreLabel = document.createElement('div');
+                scoreLabel.className = 'section-label';
+                scoreLabel.textContent = '譜面欄';
+                partDiv.appendChild(scoreLabel);
 
                 // グリッド
                 const gridContainer = document.createElement('div');
