@@ -352,7 +352,8 @@
             2. フラム記号（≈）をクリックでフラム装飾ON/OFF → ONの時、基本音にフラムが付加（例: □≈）<br>
             3. パート名はクリックして編集可能<br>
             4. 小節をクリックすると、その小節全体が黄色でハイライト表示されます<br>
-            5. 各行の右側ボタンで小節ごとに4連/3連を切り替え可能
+            5. 各行の右側ボタンで小節ごとに4連/3連を切り替え可能<br>
+            6. 「コピー」ボタンで行をコピー、「貼付」ボタンで他の行に貼り付け（小節構成と記号配置がコピーされます）
         </div>
     </div>
 
@@ -363,6 +364,7 @@
             selectedSymbol: null,
             selectedBeatGroup: null, // { partId, row, measureIndex }
             flamEnabled: false,  // フラム装飾のON/OFF
+            copiedRowData: null,  // コピーした行データ { rowConfig, cellSymbols: [記号配列] }
             partIdCounter: 0
         };
 
@@ -448,6 +450,54 @@
             if (!part) return;
             const current = part.rowConfigs[row].beats[measureIndex];
             part.rowConfigs[row].beats[measureIndex] = current === 4 ? 3 : 4;
+            render();
+            saveToLocalStorage();
+        }
+
+        // 行をコピー
+        function copyRow(partId, row) {
+            const part = app.parts.find(p => p.id === partId);
+            if (!part) return;
+
+            const rowConfig = part.rowConfigs[row];
+            const cellsInRow = getCellsForRow(rowConfig);
+            const cellSymbols = [];
+
+            // 行内の各セルの記号を配列に保存
+            for (let col = 0; col < cellsInRow; col++) {
+                const position = calculatePosition(part, row, col);
+                cellSymbols[col] = part.notes[position] || null;
+            }
+
+            app.copiedRowData = {
+                rowConfig: { beats: [...rowConfig.beats] },
+                cellSymbols: cellSymbols
+            };
+
+            render();
+        }
+
+        // 行に貼り付け
+        function pasteRow(partId, row) {
+            if (!app.copiedRowData) return;
+
+            const part = app.parts.find(p => p.id === partId);
+            if (!part) return;
+
+            // rowConfigをコピー元と同じにする
+            part.rowConfigs[row] = { beats: [...app.copiedRowData.rowConfig.beats] };
+
+            // コピー元の記号配置を貼り付け
+            const cellsInRow = getCellsForRow(part.rowConfigs[row]);
+            for (let col = 0; col < cellsInRow; col++) {
+                const position = calculatePosition(part, row, col);
+                if (app.copiedRowData.cellSymbols[col]) {
+                    part.notes[position] = app.copiedRowData.cellSymbols[col];
+                } else {
+                    delete part.notes[position];
+                }
+            }
+
             render();
             saveToLocalStorage();
         }
@@ -641,6 +691,30 @@
                     beatControls.appendChild(toggle2);
 
                     gridRow.appendChild(beatControls);
+
+                    // 行コピー・貼り付けボタン
+                    const rowActionControls = document.createElement('div');
+                    rowActionControls.style.cssText = 'display: flex; gap: 8px; margin-left: 15px;';
+
+                    // コピーボタン
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'beat-toggle';
+                    copyBtn.textContent = 'コピー';
+                    copyBtn.onclick = () => copyRow(part.id, row);
+                    rowActionControls.appendChild(copyBtn);
+
+                    // 貼り付けボタン
+                    const pasteBtn = document.createElement('button');
+                    pasteBtn.className = 'beat-toggle';
+                    pasteBtn.textContent = '貼付';
+                    pasteBtn.style.cssText = app.copiedRowData ?
+                        'background: #27ae60; color: white; border-color: #27ae60;' :
+                        'opacity: 0.5; cursor: not-allowed;';
+                    pasteBtn.disabled = !app.copiedRowData;
+                    pasteBtn.onclick = () => pasteRow(part.id, row);
+                    rowActionControls.appendChild(pasteBtn);
+
+                    gridRow.appendChild(rowActionControls);
                     gridContainer.appendChild(gridRow);
                 }
 
