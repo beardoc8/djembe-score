@@ -348,9 +348,11 @@
 
         <div class="info">
             <strong>操作方法:</strong><br>
-            1. 記号をクリックして選択 → グリッド上をクリックで配置 → 配置済みの記号をクリックで削除<br>
-            2. パート名はクリックして編集可能<br>
-            3. 小節をクリックすると、その小節全体が黄色でハイライト表示されます
+            1. 記号をクリックして選択 → グリッド上をクリックで配置（上書き可能）<br>
+            2. フラム記号（≈）をクリックでフラム装飾ON/OFF → ONの時、基本音にフラムが付加（例: □≈）<br>
+            3. パート名はクリックして編集可能<br>
+            4. 小節をクリックすると、その小節全体が黄色でハイライト表示されます<br>
+            5. 各行の右側ボタンで小節ごとに4連/3連を切り替え可能
         </div>
     </div>
 
@@ -360,19 +362,20 @@
             parts: [],
             selectedSymbol: null,
             selectedBeatGroup: null, // { partId, row, measureIndex }
+            flamEnabled: false,  // フラム装飾のON/OFF
             partIdCounter: 0
         };
 
-        // 記号定義（8種類）
+        // 記号定義（8種類：基本音6種 + ロール1種 + フラム装飾1種）
         const SYMBOLS = [
-            { name: 'ベース', symbol: '□' },
-            { name: 'トーン', symbol: '○' },
-            { name: 'スラップ', symbol: '△' },
-            { name: 'ベース(ミュート)', symbol: '■' },
-            { name: 'トーン(ミュート)', symbol: '●' },
-            { name: 'スラップ(ミュート)', symbol: '▲' },
-            { name: 'ロール', symbol: '≡' },
-            { name: 'フラム', symbol: '≈' }
+            { name: 'ベース', symbol: '□', isBasic: true },
+            { name: 'トーン', symbol: '○', isBasic: true },
+            { name: 'スラップ', symbol: '△', isBasic: true },
+            { name: 'ベース(ミュート)', symbol: '■', isBasic: true },
+            { name: 'トーン(ミュート)', symbol: '●', isBasic: true },
+            { name: 'スラップ(ミュート)', symbol: '▲', isBasic: true },
+            { name: 'ロール', symbol: '≡', isBasic: true },
+            { name: 'フラム', symbol: '≈', isBasic: false }  // フラム装飾
         ];
 
         // 初期化
@@ -516,7 +519,14 @@
                 // 記号パレット
                 const palette = document.createElement('div');
                 palette.className = 'symbol-palette';
-                SYMBOLS.forEach(sym => {
+                SYMBOLS.forEach((sym, index) => {
+                    // フラムの前に区切り線を挿入
+                    if (!sym.isBasic && index > 0) {
+                        const divider = document.createElement('div');
+                        divider.style.cssText = 'width: 2px; background: #999; margin: 0 15px; align-self: stretch;';
+                        palette.appendChild(divider);
+                    }
+
                     const item = document.createElement('div');
                     item.className = 'symbol-item';
 
@@ -526,7 +536,16 @@
                     if (app.selectedSymbol === sym.symbol) {
                         btn.classList.add('selected');
                     }
-                    btn.textContent = sym.symbol;
+                    // フラム記号がONの場合、フラムボタンを選択状態に
+                    if (sym.symbol === '≈' && app.flamEnabled) {
+                        btn.classList.add('selected');
+                    }
+                    // フラム装飾がONで基本音が選択されている場合、ボタンにフラムを表示
+                    if (app.flamEnabled && sym.isBasic && app.selectedSymbol === sym.symbol) {
+                        btn.textContent = sym.symbol + '≈';
+                    } else {
+                        btn.textContent = sym.symbol;
+                    }
                     btn.title = sym.name;
                     btn.onclick = () => selectSymbol(part.id, sym.symbol);
 
@@ -639,10 +658,15 @@
 
         // 記号選択
         function selectSymbol(partId, symbol) {
-            if (app.selectedSymbol === symbol) {
-                app.selectedSymbol = null;
+            // フラム記号の場合はフラム装飾をON/OFF
+            if (symbol === '≈') {
+                app.flamEnabled = !app.flamEnabled;
             } else {
-                app.selectedSymbol = symbol;
+                if (app.selectedSymbol === symbol) {
+                    app.selectedSymbol = null;
+                } else {
+                    app.selectedSymbol = symbol;
+                }
             }
             render();
         }
@@ -661,12 +685,14 @@
                 measureIndex: measureInfo.measureIndex
             };
 
-            if (part.notes[position]) {
-                // 既に記号がある場合は削除
-                delete part.notes[position];
-            } else if (app.selectedSymbol) {
-                // 記号を配置
-                part.notes[position] = app.selectedSymbol;
+            // 記号を配置（常に上書き）
+            if (app.selectedSymbol) {
+                // フラム装飾がONで、かつロール（≡）でない場合はフラム記号を付加
+                if (app.flamEnabled && app.selectedSymbol !== '≡') {
+                    part.notes[position] = app.selectedSymbol + '≈';
+                } else {
+                    part.notes[position] = app.selectedSymbol;
+                }
             }
 
             render();
