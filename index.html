@@ -129,6 +129,7 @@
             gap: 12px;
             margin-bottom: 25px;
             flex-wrap: wrap;
+            -webkit-overflow-scrolling: touch;
         }
 
         .symbol-divider {
@@ -197,7 +198,14 @@
             gap: 3px;
             margin-bottom: 15px;
             align-items: center;
-            min-width: fit-content;
+        }
+
+        .grid-row-content {
+            display: flex;
+            gap: 3px;
+            align-items: center;
+            overflow-x: auto;
+            width: 100%;
         }
 
         .row-label {
@@ -212,6 +220,7 @@
             display: flex;
             gap: 3px;
             flex: 1;
+            -webkit-overflow-scrolling: touch;
         }
 
         .beat-controls {
@@ -414,6 +423,18 @@
             .grid-row {
                 margin-bottom: 10px;
                 gap: 2px;
+                flex-wrap: wrap;
+            }
+
+            .grid-row > .row-label {
+                width: 100%;
+                margin-bottom: 5px;
+                margin-right: 0;
+            }
+
+            .grid-row > .grid-cells {
+                width: 100%;
+                overflow-x: auto;
             }
 
             .row-label {
@@ -439,14 +460,18 @@
 
             .beat-controls {
                 gap: 4px;
-                margin-left: 8px;
+                margin-left: 0;
                 flex-wrap: wrap;
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .row-action-controls {
                 gap: 4px;
-                margin-left: 8px;
+                margin-left: 0;
                 flex-wrap: wrap;
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .beat-toggle {
@@ -533,6 +558,18 @@
 
             .grid-row {
                 margin-bottom: 8px;
+                flex-wrap: wrap;
+            }
+
+            .grid-row > .row-label {
+                width: 100%;
+                margin-bottom: 5px;
+                margin-right: 0;
+            }
+
+            .grid-row > .grid-cells {
+                width: 100%;
+                overflow-x: auto;
             }
 
             .row-label {
@@ -549,12 +586,16 @@
 
             .beat-controls {
                 gap: 3px;
-                margin-left: 5px;
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .row-action-controls {
                 gap: 3px;
-                margin-left: 5px;
+                margin-left: 0;
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .beat-toggle {
