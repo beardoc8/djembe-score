@@ -328,7 +328,8 @@
             border-radius: 8px;
             font-size: 14px;
             color: #2e7d32;
-            line-height: 1.6;
+            line-height: 1.8;
+            text-align: left;
         }
 
         .file-input {
@@ -361,7 +362,7 @@
             }
 
             .part {
-                padding: 12px;
+                padding: 10px;
                 margin-bottom: 20px;
             }
 
@@ -391,14 +392,20 @@
                 overflow-x: auto;
                 flex-wrap: nowrap;
                 padding-bottom: 5px;
+                padding-right: 10px;
             }
 
             .symbol-divider {
                 margin: 0 8px;
+                flex-shrink: 0;
             }
 
             .symbol-item {
                 flex-shrink: 0;
+            }
+
+            .symbol-item:last-child {
+                margin-right: 10px;
             }
 
             .symbol-label {
@@ -487,10 +494,10 @@
             }
 
             .info {
-                margin-top: 20px;
-                padding: 12px;
-                font-size: 11px;
-                line-height: 1.5;
+                margin-top: 15px;
+                padding: 10px;
+                font-size: 10px;
+                line-height: 1.7;
             }
         }
 
@@ -519,7 +526,7 @@
             }
 
             .part {
-                padding: 10px;
+                padding: 8px;
                 margin-bottom: 15px;
             }
 
@@ -536,10 +543,16 @@
 
             .symbol-palette {
                 gap: 4px;
+                padding-right: 15px;
             }
 
             .symbol-divider {
                 margin: 0 5px;
+                flex-shrink: 0;
+            }
+
+            .symbol-item:last-child {
+                margin-right: 15px;
             }
 
             .symbol-label {
@@ -610,8 +623,9 @@
             }
 
             .info {
-                padding: 10px;
-                font-size: 10px;
+                padding: 8px;
+                font-size: 9px;
+                line-height: 1.6;
             }
         }
     </style>
@@ -632,12 +646,13 @@
 
         <div class="info">
             <strong>操作方法:</strong><br>
-            1. 記号をクリックして選択 → グリッド上をクリックで配置（上書き可能）<br>
-            2. フラム記号（≈）をクリックでフラム装飾ON/OFF → ONの時、基本音にフラムが付加（例: □≈）<br>
-            3. パート名はクリックして編集可能<br>
-            4. 小節をクリックすると、その小節全体が黄色でハイライト表示されます<br>
-            5. 各行の右側ボタンで小節ごとに4連/3連を切り替え可能<br>
-            6. 「コピー」ボタンで行をコピー、「貼付」ボタンで他の行に貼り付け（小節構成と記号配置がコピーされます）
+            1. 記号選択 → グリッドに配置<br>
+            2. フラム（≈）で装飾ON/OFF<br>
+            　ONの時：基本音+フラム（例: □≈）<br>
+            3. パート名クリックで編集<br>
+            4. 小節クリックで黄色ハイライト<br>
+            5. 4連/3連ボタンで小節切替<br>
+            6. コピー/貼付で行を複製
         </div>
     </div>
 
