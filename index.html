@@ -260,6 +260,15 @@
             background: #e8f0fe;
         }
 
+        .grid-cell.beat-selected {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .grid-cell.beat-selected.has-symbol {
+            background: #ffe8a1;
+        }
+
         .file-input {
             display: none;
         }
@@ -336,6 +345,7 @@
             timeSignature: '4/4', // '4/4' or '12/8'
             parts: [],
             selectedSymbol: null,
+            selectedBeatGroup: null, // { partId, row, groupIndex }
             partIdCounter: 0
         };
 
@@ -373,6 +383,7 @@
         // 拍子設定
         function setTimeSignature(time) {
             app.timeSignature = time;
+            app.selectedBeatGroup = null; // 拍子変更時にビートグループ選択をリセット
             document.getElementById('time44').classList.toggle('active', time === '4/4');
             document.getElementById('time128').classList.toggle('active', time === '12/8');
             render();
@@ -389,7 +400,12 @@
                 id: app.partIdCounter++,
                 name: `パート${app.parts.length + 1}`,
                 notes: {},
-                rows: 4  // 初期4行（4行 x 8マス = 32マス）
+                rowConfigs: [
+                    { beats: [4, 4] },  // 1行目: 両小節とも4連
+                    { beats: [4, 4] },  // 2行目
+                    { beats: [4, 4] },  // 3行目
+                    { beats: [4, 4] }   // 4行目
+                ]
             };
             app.parts.push(part);
             render();
@@ -414,14 +430,37 @@
         function addRow(partId) {
             const part = app.parts.find(p => p.id === partId);
             if (!part) return;
-            part.rows++;
+            part.rowConfigs.push({ beats: [4, 4] });  // デフォルトは両小節とも4連
             render();
             saveToLocalStorage();
         }
 
-        // グリッドのセル数を取得（1行あたり）
-        function getCellsPerRow() {
-            return 8; // 1行に8マス
+        // 指定行のマス数を取得
+        function getCellsForRow(rowConfig) {
+            // rowConfig.beats = [小節1の連数, 小節2の連数]
+            return rowConfig.beats[0] + rowConfig.beats[1];
+        }
+
+        // 指定列が属する小節のインデックス（0または1）と、その小節内での連数を取得
+        function getMeasureInfo(rowConfig, col) {
+            const measure1Beats = rowConfig.beats[0];
+            if (col < measure1Beats) {
+                return { measureIndex: 0, beats: measure1Beats, startCol: 0 };
+            } else {
+                return { measureIndex: 1, beats: rowConfig.beats[1], startCol: measure1Beats };
+            }
+        }
+
+        // 行とセルから累積positionを計算
+        function calculatePosition(part, row, col) {
+            let position = 0;
+            // 前の行までの累積マス数を加算
+            for (let r = 0; r < row; r++) {
+                position += getCellsForRow(part.rowConfigs[r]);
+            }
+            // 現在の行のcol位置を加算
+            position += col;
+            return position;
         }
 
         // レンダリング
@@ -521,9 +560,20 @@
                         const cell = document.createElement('div');
                         cell.className = 'grid-cell';
 
-                        // 4マスごとに区切り線（小節の区切り）
-                        if (col % 4 === 0) {
+                        // 拍子に応じた区切り線（小節の区切り）
+                        // 4/4拍子: 4マスごと、12/8拍子: 3マスごと
+                        const beatGroupSize = getBeatGroupSize();
+                        if (col % beatGroupSize === 0) {
                             cell.classList.add('measure-start');
+                        }
+
+                        // ビートグループ選択状態のハイライト
+                        const groupIndex = getBeatGroupIndex(col);
+                        if (app.selectedBeatGroup &&
+                            app.selectedBeatGroup.partId === part.id &&
+                            app.selectedBeatGroup.row === row &&
+                            app.selectedBeatGroup.groupIndex === groupIndex) {
+                            cell.classList.add('beat-selected');
                         }
 
                         // 配置されている記号を表示
@@ -532,7 +582,7 @@
                             cell.classList.add('has-symbol');
                         }
 
-                        cell.onclick = () => placeOrRemoveSymbol(part.id, position);
+                        cell.onclick = () => placeOrRemoveSymbol(part.id, position, row, col);
                         gridCells.appendChild(cell);
                     }
 
@@ -567,9 +617,17 @@
         }
 
         // 記号の配置または削除
-        function placeOrRemoveSymbol(partId, position) {
+        function placeOrRemoveSymbol(partId, position, row, col) {
             const part = app.parts.find(p => p.id === partId);
             if (!part) return;
+
+            // ビートグループ選択状態を更新
+            const groupIndex = getBeatGroupIndex(col);
+            app.selectedBeatGroup = {
+                partId: partId,
+                row: row,
+                groupIndex: groupIndex
+            };
 
             if (part.notes[position]) {
                 // 既に記号がある場合は削除
